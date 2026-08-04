@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+issueTrackerURL = "https://github.com/mahmudindev/mcmod-orenocommons/issues"
+license = "ARR"
+
+[[mods]]
+modId = "orenocommons"
+version = "${version}"
+displayName = "Oreno Commons"
+authors = "mahmudindev"
+description = '''
+Unify and add common code across mod loader.
+'''
+logoFile = "assets/orenocommons/icon.png"
+
+[[dependencies.orenocommons]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.orenocommons]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"

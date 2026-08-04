@@ -1,0 +1,45 @@
+package com.github.mahmudindev.mcmod.orenocommons;
+
+import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+
+import java.nio.file.Path;
+import java.util.function.Supplier;
+
+public class OrenoCommonsExpectPlatform {
+    @ExpectPlatform
+    public static String getPlatformName() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static Path getGameDirectory() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static Path getConfigDirectory() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isModLoaded(String id) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isDevelopmentEnvironment() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static <T, V extends T> Supplier<V> registerRegistryEntry(
+            ResourceKey<? extends Registry<T>> resourceKey,
+            ResourceLocation resourceLocation,
+            Supplier<? extends V> supplier
+    ) {
+        throw new AssertionError();
+    }
+}
