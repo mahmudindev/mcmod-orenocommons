@@ -1,6 +1,6 @@
 package com.github.mahmudindev.mcmod.orenocommons.forge.client.network;
 
-import com.github.mahmudindev.mcmod.orenocommons.client.network.UnifiedPacketClient;
+import com.github.mahmudindev.mcmod.orenocommons.client.network.UnifiedNetworkPacketClient;
 import com.github.mahmudindev.mcmod.orenocommons.forge.network.UnifiedNetworkForge;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class UnifiedNetworkForgeClient {
     private static final Map<String, EventNetworkChannel> CHANNELS = new HashMap<>();
-    private static final Map<ResourceLocation, UnifiedPacketClient.Handler> PACKET_HANDLERS = new HashMap<>();
+    private static final Map<ResourceLocation, UnifiedNetworkPacketClient.Handler> PACKET_HANDLERS = new HashMap<>();
 
     public static EventNetworkChannel getChannel(String namespace) {
         return CHANNELS.get(namespace);
@@ -29,7 +29,7 @@ public class UnifiedNetworkForgeClient {
 
     public static void registerClientPacketReceiver(
             ResourceLocation channelName,
-            UnifiedPacketClient.Handler handler
+            UnifiedNetworkPacketClient.Handler handler
     ) {
         CHANNELS.computeIfAbsent(channelName.getNamespace(), key -> {
             EventNetworkChannel channel;
@@ -48,7 +48,7 @@ public class UnifiedNetworkForgeClient {
                 FriendlyByteBuf buf = event.getPayload();
 
                 ResourceLocation channelNameX = buf.readResourceLocation();
-                UnifiedPacketClient.Handler handlerX = PACKET_HANDLERS.get(channelNameX);
+                UnifiedNetworkPacketClient.Handler handlerX = PACKET_HANDLERS.get(channelNameX);
 
                 NetworkEvent.Context context = event.getSource().get();
 

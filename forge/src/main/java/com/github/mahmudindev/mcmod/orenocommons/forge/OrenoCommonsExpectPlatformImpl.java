@@ -1,7 +1,7 @@
 package com.github.mahmudindev.mcmod.orenocommons.forge;
 
 import com.github.mahmudindev.mcmod.orenocommons.forge.network.UnifiedNetworkForge;
-import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedPacket;
+import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -59,7 +59,7 @@ public class OrenoCommonsExpectPlatformImpl {
 
     public static void registerServerNetworkPacketReceiver(
             ResourceLocation channelName,
-            UnifiedPacket.Handler handler
+            UnifiedNetworkPacket.Handler handler
     ) {
         UnifiedNetworkForge.registerServerPacketReceiver(channelName, handler);
     }

@@ -1,6 +1,6 @@
 package com.github.mahmudindev.mcmod.orenocommons;
 
-import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedPacket;
+import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -49,7 +49,7 @@ public class OrenoCommonsExpectPlatform {
     @ExpectPlatform
     public static void registerServerNetworkPacketReceiver(
             ResourceLocation channelName,
-            UnifiedPacket.Handler handler
+            UnifiedNetworkPacket.Handler handler
     ) {
         throw new AssertionError();
     }

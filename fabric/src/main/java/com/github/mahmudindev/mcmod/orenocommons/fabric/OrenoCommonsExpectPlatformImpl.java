@@ -1,6 +1,6 @@
 package com.github.mahmudindev.mcmod.orenocommons.fabric;
 
-import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedPacket;
+import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
@@ -55,7 +55,7 @@ public class OrenoCommonsExpectPlatformImpl {
 
     public static void registerServerNetworkPacketReceiver(
             ResourceLocation channelName,
-            UnifiedPacket.Handler handler
+            UnifiedNetworkPacket.Handler handler
     ) {
         ServerPlayNetworking.registerGlobalReceiver(
                 channelName,

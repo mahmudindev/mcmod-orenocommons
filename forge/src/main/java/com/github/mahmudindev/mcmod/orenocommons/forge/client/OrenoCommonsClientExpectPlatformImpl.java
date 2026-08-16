@@ -1,6 +1,6 @@
 package com.github.mahmudindev.mcmod.orenocommons.forge.client;
 
-import com.github.mahmudindev.mcmod.orenocommons.client.network.UnifiedPacketClient;
+import com.github.mahmudindev.mcmod.orenocommons.client.network.UnifiedNetworkPacketClient;
 import com.github.mahmudindev.mcmod.orenocommons.forge.client.network.UnifiedNetworkForgeClient;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 public class OrenoCommonsClientExpectPlatformImpl {
     public static void registerClientNetworkPacketReceiver(
             ResourceLocation channelName,
-            UnifiedPacketClient.Handler handler
+            UnifiedNetworkPacketClient.Handler handler
     ) {
         UnifiedNetworkForgeClient.registerClientPacketReceiver(channelName, handler);
     }
