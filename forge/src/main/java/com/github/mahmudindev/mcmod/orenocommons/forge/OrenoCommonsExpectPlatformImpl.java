@@ -1,8 +1,12 @@
 package com.github.mahmudindev.mcmod.orenocommons.forge;
 
+import com.github.mahmudindev.mcmod.orenocommons.forge.network.UnifiedNetworkForge;
+import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedPacket;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -51,5 +55,20 @@ public class OrenoCommonsExpectPlatformImpl {
         deferredRegister.register(modEventBus);
 
         return deferredRegister.register(resourceLocation.getPath(), supplier);
+    }
+
+    public static void registerServerNetworkPacketReceiver(
+            ResourceLocation channelName,
+            UnifiedPacket.Handler handler
+    ) {
+        UnifiedNetworkForge.registerServerPacketReceiver(channelName, handler);
+    }
+
+    public static void sendNetworkPacketToPlayer(
+            ServerPlayer player,
+            ResourceLocation channelName,
+            FriendlyByteBuf buf
+    ) {
+        UnifiedNetworkForge.sendPacketToPlayer(player, channelName, buf);
     }
 }

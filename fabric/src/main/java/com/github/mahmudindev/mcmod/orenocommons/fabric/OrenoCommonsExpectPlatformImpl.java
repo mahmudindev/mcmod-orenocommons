@@ -1,10 +1,14 @@
 package com.github.mahmudindev.mcmod.orenocommons.fabric;
 
+import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedPacket;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.nio.file.Path;
 import java.util.function.Supplier;
@@ -47,5 +51,25 @@ public class OrenoCommonsExpectPlatformImpl {
         V registered = Registry.register(registryX, resourceLocation, supplier.get());
 
         return () -> registered;
+    }
+
+    public static void registerServerNetworkPacketReceiver(
+            ResourceLocation channelName,
+            UnifiedPacket.Handler handler
+    ) {
+        ServerPlayNetworking.registerGlobalReceiver(
+                channelName,
+                (server, player, handlerX, buf, responseSender) -> {
+                    handler.handle(server, player, buf);
+                }
+        );
+    }
+
+    public static void sendNetworkPacketToPlayer(
+            ServerPlayer player,
+            ResourceLocation channelName,
+            FriendlyByteBuf buf
+    ) {
+        ServerPlayNetworking.send(player, channelName, buf);
     }
 }

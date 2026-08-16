@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Supplier;
 
-public class GeneralRegistry {
+public class UnifiedRegistry {
     public static <T, V extends T> Supplier<V> registerEntry(
             ResourceKey<? extends Registry<T>> resourceKey,
             ResourceLocation resourceLocation,

@@ -1,9 +1,12 @@
 package com.github.mahmudindev.mcmod.orenocommons;
 
+import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedPacket;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.nio.file.Path;
 import java.util.function.Supplier;
@@ -39,6 +42,23 @@ public class OrenoCommonsExpectPlatform {
             ResourceKey<? extends Registry<T>> resourceKey,
             ResourceLocation resourceLocation,
             Supplier<? extends V> supplier
+    ) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static void registerServerNetworkPacketReceiver(
+            ResourceLocation channelName,
+            UnifiedPacket.Handler handler
+    ) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static void sendNetworkPacketToPlayer(
+            ServerPlayer player,
+            ResourceLocation channelName,
+            FriendlyByteBuf buf
     ) {
         throw new AssertionError();
     }

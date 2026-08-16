@@ -1,10 +1,10 @@
-package com.github.mahmudindev.mcmod.orenocommons.general;
+package com.github.mahmudindev.mcmod.orenocommons.loader;
 
 import com.github.mahmudindev.mcmod.orenocommons.OrenoCommonsExpectPlatform;
 
 import java.nio.file.Path;
 
-public class Loader {
+public class UnifiedLoader {
     public static String getPlatformName() {
         return OrenoCommonsExpectPlatform.getPlatformName();
     }
