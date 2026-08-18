@@ -72,4 +72,11 @@ public class OrenoCommonsExpectPlatformImpl {
     ) {
         ServerPlayNetworking.send(player, channelName, buf);
     }
+
+    public static boolean canSendNetworkPacketToPlayer(
+            ServerPlayer player,
+            ResourceLocation channelName
+    ) {
+        return ServerPlayNetworking.canSend(player, channelName);
+    }
 }

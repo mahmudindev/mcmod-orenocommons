@@ -24,4 +24,8 @@ public class OrenoCommonsClientExpectPlatformImpl {
     ) {
         ClientPlayNetworking.send(channelName, buf);
     }
+
+    public static boolean canSendNetworkPacketToServer(ResourceLocation channelName) {
+        return ClientPlayNetworking.canSend(channelName);
+    }
 }

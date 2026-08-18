@@ -21,4 +21,9 @@ public class OrenoCommonsClientExpectPlatform {
     ) {
         throw new AssertionError();
     }
+
+    @ExpectPlatform
+    public static boolean canSendNetworkPacketToServer(ResourceLocation channelName) {
+        throw new AssertionError();
+    }
 }

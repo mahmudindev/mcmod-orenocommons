@@ -71,4 +71,11 @@ public class OrenoCommonsExpectPlatformImpl {
     ) {
         UnifiedNetworkForge.sendPacketToPlayer(player, channelName, buf);
     }
+
+    public static boolean canSendNetworkPacketToPlayer(
+            ServerPlayer player,
+            ResourceLocation channelName
+    ) {
+        return UnifiedNetworkForge.canSendPacketToPlayer(player, channelName);
+    }
 }
