@@ -18,4 +18,8 @@ public class UnifiedNetworkClient {
     ) {
         OrenoCommonsClientExpectPlatform.sendNetworkPacketToServer(channelName, buf);
     }
+
+    public static boolean canSendPacketToServer(ResourceLocation channelName) {
+        return OrenoCommonsClientExpectPlatform.canSendNetworkPacketToServer(channelName);
+    }
 }

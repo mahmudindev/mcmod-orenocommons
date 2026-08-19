@@ -11,10 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.network.ConnectionData;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.*;
 import net.minecraftforge.network.event.EventNetworkChannel;
 
 import java.util.ArrayList;
@@ -38,11 +35,7 @@ public class UnifiedNetworkForgeClient {
                         buf.writeResourceLocation(id);
                     });
 
-                    Minecraft client = Minecraft.getInstance();
-                    ClientPacketListener connection = client.getConnection();
-                    if (connection == null) {
-                        throw new IllegalStateException("Connection is not available");
-                    }
+                    ClientPacketListener connection = getConnection();
                     connection.send(new ServerboundCustomPayloadPacket(
                             UnifiedNetworkForge.CHANNEL_NAME,
                             buf
@@ -70,6 +63,15 @@ public class UnifiedNetworkForgeClient {
         MinecraftForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut event) -> {
             SERVER_PACKETS.clear();
         });
+    }
+
+    private static ClientPacketListener getConnection() {
+        Minecraft client = Minecraft.getInstance();
+        ClientPacketListener connection = client.getConnection();
+        if (connection == null) {
+            throw new IllegalStateException("Connection is not available");
+        }
+        return connection;
     }
 
     public static EventNetworkChannel getChannel(String namespace) {
@@ -131,11 +133,7 @@ public class UnifiedNetworkForgeClient {
             ResourceLocation channelName,
             FriendlyByteBuf buf
     ) {
-        Minecraft client = Minecraft.getInstance();
-        ClientPacketListener connection = client.getConnection();
-        if (connection == null) {
-            throw new IllegalStateException("Connection is not available yet");
-        }
+        ClientPacketListener connection = getConnection();
 
         if (!SERVER_PACKETS.contains(channelName)) {
             connection.send(new ServerboundCustomPayloadPacket(channelName, buf));
@@ -156,16 +154,7 @@ public class UnifiedNetworkForgeClient {
             return true;
         }
 
-        Minecraft client = Minecraft.getInstance();
-        ClientPacketListener connection = client.getConnection();
-        if (connection == null) {
-            throw new IllegalStateException("Connection is not available yet");
-        }
-        ConnectionData connectionData = NetworkHooks.getConnectionData(connection.getConnection());
-        if (connectionData != null) {
-            return connectionData.getChannels().containsKey(channelName);
-        }
-
-        return false;
+        ClientPacketListener connection = getConnection();
+        return UnifiedNetworkForge.canSendPacket(connection.getConnection(), channelName);
     }
 }

@@ -20,4 +20,11 @@ public class UnifiedNetwork {
     ) {
         OrenoCommonsExpectPlatform.sendNetworkPacketToPlayer(player, channelName, buf);
     }
+
+    public static boolean canSendPacketToPlayer(
+            ServerPlayer player,
+            ResourceLocation channelName
+    ) {
+        return OrenoCommonsExpectPlatform.canSendNetworkPacketToPlayer(player, channelName);
+    }
 }

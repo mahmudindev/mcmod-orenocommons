@@ -13,10 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.network.ConnectionData;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.*;
 import net.minecraftforge.network.event.EventNetworkChannel;
 
 import java.util.ArrayList;
@@ -174,6 +171,20 @@ public class UnifiedNetworkForge {
         ));
     }
 
+    public static boolean canSendPacket(Connection connection, ResourceLocation channelName) {
+        ConnectionData connectionData = NetworkHooks.getConnectionData(connection);
+        if (connectionData != null && connectionData.getChannels().containsKey(channelName)) {
+            return true;
+        }
+
+        MCRegisterPacketHandler.ChannelList channelList = NetworkHooks.getChannelList(connection);
+        if (channelList != null && channelList.getRemoteLocations().contains(channelName)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean canSendPacketToPlayer(
             ServerPlayer player,
             ResourceLocation channelName
@@ -183,12 +194,6 @@ public class UnifiedNetworkForge {
             return true;
         }
 
-        Connection connection = player.connection.connection;
-        ConnectionData connectionData = NetworkHooks.getConnectionData(connection);
-        if (connectionData != null) {
-            return connectionData.getChannels().containsKey(channelName);
-        }
-
-        return false;
+        return canSendPacket(player.connection.connection, channelName);
     }
 }
