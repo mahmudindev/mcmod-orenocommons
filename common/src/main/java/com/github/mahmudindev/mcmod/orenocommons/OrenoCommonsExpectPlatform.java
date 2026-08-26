@@ -1,5 +1,6 @@
 package com.github.mahmudindev.mcmod.orenocommons;
 
+import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.core.Registry;
@@ -18,17 +19,22 @@ public class OrenoCommonsExpectPlatform {
     }
 
     @ExpectPlatform
-    public static Path getGameDirectory() {
+    public static Path getGameDir() {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static Path getConfigDirectory() {
+    public static Path getConfigDir() {
         throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isModLoaded(String id) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static EnvSide getEnvSide() {
         throw new AssertionError();
     }
 

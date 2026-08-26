@@ -1,6 +1,7 @@
 package com.github.mahmudindev.mcmod.orenocommons.forge;
 
 import com.github.mahmudindev.mcmod.orenocommons.forge.network.UnifiedNetworkForge;
+import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
@@ -24,16 +26,29 @@ public class OrenoCommonsExpectPlatformImpl {
         return "Forge";
     }
 
-    public static Path getGameDirectory() {
+    public static Path getGameDir() {
         return FMLPaths.GAMEDIR.get();
     }
 
-    public static Path getConfigDirectory() {
+    public static Path getConfigDir() {
         return FMLPaths.CONFIGDIR.get();
     }
 
     public static boolean isModLoaded(String id) {
         return MODLIST.isLoaded(id);
+    }
+
+    public static EnvSide getEnvSide() {
+        switch (FMLEnvironment.dist) {
+            case CLIENT -> {
+                return EnvSide.CLIENT;
+            }
+            case DEDICATED_SERVER -> {
+                return EnvSide.DEDICATED_SERVER;
+            }
+        }
+
+        return null;
     }
 
     public static boolean isDevelopmentEnvironment() {

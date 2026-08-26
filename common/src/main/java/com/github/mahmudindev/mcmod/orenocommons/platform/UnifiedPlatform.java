@@ -1,24 +1,28 @@
-package com.github.mahmudindev.mcmod.orenocommons.loader;
+package com.github.mahmudindev.mcmod.orenocommons.platform;
 
 import com.github.mahmudindev.mcmod.orenocommons.OrenoCommonsExpectPlatform;
 
 import java.nio.file.Path;
 
-public class UnifiedLoader {
-    public static String getPlatformName() {
+public class UnifiedPlatform {
+    public static String getName() {
         return OrenoCommonsExpectPlatform.getPlatformName();
     }
 
-    public static Path getGameDirectory() {
-        return OrenoCommonsExpectPlatform.getGameDirectory();
+    public static Path getGameDir() {
+        return OrenoCommonsExpectPlatform.getGameDir();
     }
 
-    public static Path getConfigDirectory() {
-        return OrenoCommonsExpectPlatform.getConfigDirectory();
+    public static Path getConfigDir() {
+        return OrenoCommonsExpectPlatform.getConfigDir();
     }
 
     public static boolean isModLoaded(String id) {
         return OrenoCommonsExpectPlatform.isModLoaded(id);
+    }
+
+    public static EnvSide getEnvSide() {
+        return OrenoCommonsExpectPlatform.getEnvSide();
     }
 
     public static boolean isDevelopmentEnvironment() {

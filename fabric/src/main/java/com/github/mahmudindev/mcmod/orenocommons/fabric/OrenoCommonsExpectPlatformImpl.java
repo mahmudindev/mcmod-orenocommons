@@ -1,5 +1,6 @@
 package com.github.mahmudindev.mcmod.orenocommons.fabric;
 
+import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
@@ -20,16 +21,29 @@ public class OrenoCommonsExpectPlatformImpl {
         return "Fabric";
     }
 
-    public static Path getGameDirectory() {
+    public static Path getGameDir() {
         return LOADER.getGameDir();
     }
 
-    public static Path getConfigDirectory() {
+    public static Path getConfigDir() {
         return LOADER.getConfigDir();
     }
 
     public static boolean isModLoaded(String id) {
         return LOADER.isModLoaded(id);
+    }
+
+    public static EnvSide getEnvSide() {
+        switch (LOADER.getEnvironmentType()) {
+            case CLIENT -> {
+                return EnvSide.CLIENT;
+            }
+            case SERVER -> {
+                return EnvSide.DEDICATED_SERVER;
+            }
+        }
+
+        return null;
     }
 
     public static boolean isDevelopmentEnvironment() {

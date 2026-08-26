@@ -12,7 +12,7 @@ public class UnifiedNetworkClient {
         OrenoCommonsClientExpectPlatform.registerClientNetworkPacketReceiver(channelName, handler);
     }
 
-    public static void sendNetworkPacketToServer(
+    public static void sendPacketToServer(
             ResourceLocation channelName,
             FriendlyByteBuf buf
     ) {
