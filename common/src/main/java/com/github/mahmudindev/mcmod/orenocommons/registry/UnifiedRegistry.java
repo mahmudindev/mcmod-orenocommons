@@ -1,6 +1,6 @@
 package com.github.mahmudindev.mcmod.orenocommons.registry;
 
-import com.github.mahmudindev.mcmod.orenocommons.OrenoCommonsExpectPlatform;
+import com.github.mahmudindev.mcmod.orenocommons.platform.services.Services;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -13,7 +13,7 @@ public class UnifiedRegistry {
             ResourceLocation resourceLocation,
             Supplier<? extends V> supplier
     ) {
-        return OrenoCommonsExpectPlatform.registerRegistryEntry(
+        return Services.PLATFORM.registerRegistryEntry(
                 resourceKey,
                 resourceLocation,
                 supplier

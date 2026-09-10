@@ -1,7 +1,8 @@
-package com.github.mahmudindev.mcmod.orenocommons.fabric;
+package com.github.mahmudindev.mcmod.orenocommons.fabric.platform.services;
 
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
+import com.github.mahmudindev.mcmod.orenocommons.platform.services.IPlatformHelper;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
@@ -14,26 +15,31 @@ import net.minecraft.server.level.ServerPlayer;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
-public class OrenoCommonsExpectPlatformImpl {
+public class FabricPlatformHelper implements IPlatformHelper {
     private static final FabricLoader LOADER = FabricLoader.getInstance();
 
-    public static String getPlatformName() {
+    @Override
+    public String getPlatformName() {
         return "Fabric";
     }
 
-    public static Path getGameDir() {
+    @Override
+    public Path getGameDir() {
         return LOADER.getGameDir();
     }
 
-    public static Path getConfigDir() {
+    @Override
+    public Path getConfigDir() {
         return LOADER.getConfigDir();
     }
 
-    public static boolean isModLoaded(String id) {
+    @Override
+    public boolean isModLoaded(String id) {
         return LOADER.isModLoaded(id);
     }
 
-    public static EnvSide getEnvSide() {
+    @Override
+    public EnvSide getEnvSide() {
         switch (LOADER.getEnvironmentType()) {
             case CLIENT -> {
                 return EnvSide.CLIENT;
@@ -46,11 +52,13 @@ public class OrenoCommonsExpectPlatformImpl {
         return null;
     }
 
-    public static boolean isDevelopmentEnvironment() {
+    @Override
+    public boolean isDevelopmentEnvironment() {
         return LOADER.isDevelopmentEnvironment();
     }
 
-    public static <T, V extends T> Supplier<V> registerRegistryEntry(
+    @Override
+    public <T, V extends T> Supplier<V> registerRegistryEntry(
             ResourceKey<? extends Registry<T>> resourceKey,
             ResourceLocation resourceLocation,
             Supplier<? extends V> supplier
@@ -67,7 +75,8 @@ public class OrenoCommonsExpectPlatformImpl {
         return () -> registered;
     }
 
-    public static void registerServerNetworkPacketReceiver(
+    @Override
+    public void registerServerNetworkPacketReceiver(
             ResourceLocation channelName,
             UnifiedNetworkPacket.Handler handler
     ) {
@@ -79,7 +88,8 @@ public class OrenoCommonsExpectPlatformImpl {
         );
     }
 
-    public static void sendNetworkPacketToPlayer(
+    @Override
+    public void sendNetworkPacketToPlayer(
             ServerPlayer player,
             ResourceLocation channelName,
             FriendlyByteBuf buf
@@ -87,7 +97,8 @@ public class OrenoCommonsExpectPlatformImpl {
         ServerPlayNetworking.send(player, channelName, buf);
     }
 
-    public static boolean canSendNetworkPacketToPlayer(
+    @Override
+    public boolean canSendNetworkPacketToPlayer(
             ServerPlayer player,
             ResourceLocation channelName
     ) {

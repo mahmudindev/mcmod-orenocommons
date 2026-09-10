@@ -1,7 +1,7 @@
 package com.github.mahmudindev.mcmod.orenocommons.network;
 
 import com.github.mahmudindev.mcmod.orenocommons.OrenoCommons;
-import com.github.mahmudindev.mcmod.orenocommons.OrenoCommonsExpectPlatform;
+import com.github.mahmudindev.mcmod.orenocommons.platform.services.Services;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +19,7 @@ public class UnifiedNetwork {
             ResourceLocation channelName,
             UnifiedNetworkPacket.Handler handler
     ) {
-        OrenoCommonsExpectPlatform.registerServerNetworkPacketReceiver(channelName, handler);
+        Services.PLATFORM.registerServerNetworkPacketReceiver(channelName, handler);
     }
 
     public static void sendPacketToPlayer(
@@ -27,14 +27,14 @@ public class UnifiedNetwork {
             ResourceLocation channelName,
             FriendlyByteBuf buf
     ) {
-        OrenoCommonsExpectPlatform.sendNetworkPacketToPlayer(player, channelName, buf);
+        Services.PLATFORM.sendNetworkPacketToPlayer(player, channelName, buf);
     }
 
     public static boolean canSendPacketToPlayer(
             ServerPlayer player,
             ResourceLocation channelName
     ) {
-        return OrenoCommonsExpectPlatform.canSendNetworkPacketToPlayer(player, channelName);
+        return Services.PLATFORM.canSendNetworkPacketToPlayer(player, channelName);
     }
 
     public static void writeCompressedBuffer(

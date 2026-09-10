@@ -1,8 +1,9 @@
-package com.github.mahmudindev.mcmod.orenocommons.forge;
+package com.github.mahmudindev.mcmod.orenocommons.forge.platform.services;
 
 import com.github.mahmudindev.mcmod.orenocommons.forge.network.UnifiedNetworkForge;
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
+import com.github.mahmudindev.mcmod.orenocommons.platform.services.IPlatformHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -19,26 +20,31 @@ import net.minecraftforge.registries.DeferredRegister;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
-public class OrenoCommonsExpectPlatformImpl {
+public class ForgePlatformHelper implements IPlatformHelper {
     private static final ModList MODLIST = ModList.get();
 
-    public static String getPlatformName() {
+    @Override
+    public String getPlatformName() {
         return "Forge";
     }
 
-    public static Path getGameDir() {
+    @Override
+    public Path getGameDir() {
         return FMLPaths.GAMEDIR.get();
     }
 
-    public static Path getConfigDir() {
+    @Override
+    public Path getConfigDir() {
         return FMLPaths.CONFIGDIR.get();
     }
 
-    public static boolean isModLoaded(String id) {
+    @Override
+    public boolean isModLoaded(String id) {
         return MODLIST.isLoaded(id);
     }
 
-    public static EnvSide getEnvSide() {
+    @Override
+    public EnvSide getEnvSide() {
         switch (FMLEnvironment.dist) {
             case CLIENT -> {
                 return EnvSide.CLIENT;
@@ -51,11 +57,13 @@ public class OrenoCommonsExpectPlatformImpl {
         return null;
     }
 
-    public static boolean isDevelopmentEnvironment() {
+    @Override
+    public boolean isDevelopmentEnvironment() {
         return !FMLLoader.isProduction();
     }
 
-    public static <T, V extends T> Supplier<V> registerRegistryEntry(
+    @Override
+    public <T, V extends T> Supplier<V> registerRegistryEntry(
             ResourceKey<? extends Registry<T>> resourceKey,
             ResourceLocation resourceLocation,
             Supplier<? extends V> supplier
@@ -72,14 +80,16 @@ public class OrenoCommonsExpectPlatformImpl {
         return deferredRegister.register(resourceLocation.getPath(), supplier);
     }
 
-    public static void registerServerNetworkPacketReceiver(
+    @Override
+    public void registerServerNetworkPacketReceiver(
             ResourceLocation channelName,
             UnifiedNetworkPacket.Handler handler
     ) {
         UnifiedNetworkForge.registerServerPacketReceiver(channelName, handler);
     }
 
-    public static void sendNetworkPacketToPlayer(
+    @Override
+    public void sendNetworkPacketToPlayer(
             ServerPlayer player,
             ResourceLocation channelName,
             FriendlyByteBuf buf
@@ -87,7 +97,8 @@ public class OrenoCommonsExpectPlatformImpl {
         UnifiedNetworkForge.sendPacketToPlayer(player, channelName, buf);
     }
 
-    public static boolean canSendNetworkPacketToPlayer(
+    @Override
+    public boolean canSendNetworkPacketToPlayer(
             ServerPlayer player,
             ResourceLocation channelName
     ) {
