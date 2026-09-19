@@ -52,11 +52,13 @@ public class UnifiedNetwork {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (GZIPOutputStream gzip = new GZIPOutputStream(baos)) {
                 gzip.write(bytes);
+                gzip.finish();
             } catch (IOException e) {
                 OrenoCommons.LOGGER.error("Failed to write compressed packet", e);
+                return;
             }
-            byte[] bytesX = baos.toByteArray();
 
+            byte[] bytesX = baos.toByteArray();
             buf.writeVarInt(bytesX.length);
             buf.writeBytes(bytesX);
         } finally {
@@ -78,9 +80,10 @@ public class UnifiedNetwork {
             ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
             try (GZIPInputStream gzip = new GZIPInputStream(bais)) {
                 byte[] bytesX = gzip.readAllBytes();
-                bufX.readBytes(bytesX);
+                bufX.writeBytes(bytesX);
             } catch (IOException e) {
                 OrenoCommons.LOGGER.error("Failed to read compressed packet", e);
+                return;
             }
 
             payload.accept(bufX);
