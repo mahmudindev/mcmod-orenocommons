@@ -3,7 +3,9 @@ package com.github.mahmudindev.mcmod.orenocommons.platform.services;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import net.minecraft.core.Registry;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,19 +32,16 @@ public interface IPlatformHelper {
             Supplier<? extends V> supplier
     );
 
-    void registerServerNetworkPacketReceiver(
-            ResourceLocation channelName,
-            UnifiedNetworkPacket.Handler handler
+    <T extends CustomPacketPayload> void registerServerNetworkPacketReceiver(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            UnifiedNetworkPacket.Handler<T> handler
     );
 
-    void sendNetworkPacketToPlayer(
-            ServerPlayer player,
-            ResourceLocation channelName,
-            FriendlyByteBuf buf
-    );
+    void sendNetworkPacketToPlayer(ServerPlayer player, CustomPacketPayload payload);
 
     boolean canSendNetworkPacketToPlayer(
             ServerPlayer player,
-            ResourceLocation channelName
+            CustomPacketPayload.Type<?> type
     );
 }

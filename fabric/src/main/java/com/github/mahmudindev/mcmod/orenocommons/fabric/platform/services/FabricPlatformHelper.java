@@ -3,11 +3,14 @@ package com.github.mahmudindev.mcmod.orenocommons.fabric.platform.services;
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import com.github.mahmudindev.mcmod.orenocommons.platform.services.IPlatformHelper;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -76,32 +79,31 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void registerServerNetworkPacketReceiver(
-            ResourceLocation channelName,
-            UnifiedNetworkPacket.Handler handler
+    public <T extends CustomPacketPayload> void registerServerNetworkPacketReceiver(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            UnifiedNetworkPacket.Handler<T> handler
     ) {
+        PayloadTypeRegistry.playC2S().register(type, codec);
+
         ServerPlayNetworking.registerGlobalReceiver(
-                channelName,
-                (server, player, handlerX, buf, responseSender) -> {
-                    handler.handle(server, player, buf);
+                type,
+                (payload, context) -> {
+                    handler.handle(payload, context.server(), context.player());
                 }
         );
     }
 
     @Override
-    public void sendNetworkPacketToPlayer(
-            ServerPlayer player,
-            ResourceLocation channelName,
-            FriendlyByteBuf buf
-    ) {
-        ServerPlayNetworking.send(player, channelName, buf);
+    public void sendNetworkPacketToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        ServerPlayNetworking.send(player, payload);
     }
 
     @Override
     public boolean canSendNetworkPacketToPlayer(
             ServerPlayer player,
-            ResourceLocation channelName
+            CustomPacketPayload.Type<?> type
     ) {
-        return ServerPlayNetworking.canSend(player, channelName);
+        return ServerPlayNetworking.canSend(player, type);
     }
 }

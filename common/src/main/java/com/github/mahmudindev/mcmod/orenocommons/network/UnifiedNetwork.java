@@ -4,7 +4,9 @@ import com.github.mahmudindev.mcmod.orenocommons.OrenoCommons;
 import com.github.mahmudindev.mcmod.orenocommons.platform.services.Services;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.io.ByteArrayInputStream;
@@ -15,26 +17,23 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class UnifiedNetwork {
-    public static void registerServerPacketReceiver(
-            ResourceLocation channelName,
-            UnifiedNetworkPacket.Handler handler
+    public static <T extends CustomPacketPayload> void registerServerPacketReceiver(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<RegistryFriendlyByteBuf, T> codec,
+            UnifiedNetworkPacket.Handler<T> handler
     ) {
-        Services.PLATFORM.registerServerNetworkPacketReceiver(channelName, handler);
+        Services.PLATFORM.registerServerNetworkPacketReceiver(type, codec, handler);
     }
 
-    public static void sendPacketToPlayer(
-            ServerPlayer player,
-            ResourceLocation channelName,
-            FriendlyByteBuf buf
-    ) {
-        Services.PLATFORM.sendNetworkPacketToPlayer(player, channelName, buf);
+    public static void sendPacketToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        Services.PLATFORM.sendNetworkPacketToPlayer(player, payload);
     }
 
     public static boolean canSendPacketToPlayer(
             ServerPlayer player,
-            ResourceLocation channelName
+            CustomPacketPayload.Type<?> type
     ) {
-        return Services.PLATFORM.canSendNetworkPacketToPlayer(player, channelName);
+        return Services.PLATFORM.canSendNetworkPacketToPlayer(player, type);
     }
 
     public static void writeCompressedBuffer(

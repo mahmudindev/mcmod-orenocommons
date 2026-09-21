@@ -1,26 +1,29 @@
-package com.github.mahmudindev.mcmod.orenocommons.forge.platform.services;
+package com.github.mahmudindev.mcmod.orenocommons.neoforge.platform.services;
 
-import com.github.mahmudindev.mcmod.orenocommons.forge.network.UnifiedNetworkForge;
+import com.github.mahmudindev.mcmod.orenocommons.neoforge.OrenoCommonsNeoForge;
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import com.github.mahmudindev.mcmod.orenocommons.platform.services.IPlatformHelper;
 import net.minecraft.core.Registry;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.DeferredRegister;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
-public class ForgePlatformHelper implements IPlatformHelper {
+public class NeoForgePlatformHelper implements IPlatformHelper {
     private static final ModList MODLIST = ModList.get();
 
     @Override
@@ -73,35 +76,39 @@ public class ForgePlatformHelper implements IPlatformHelper {
                 resourceLocation.getNamespace()
         );
 
-        //noinspection removal
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        deferredRegister.register(modEventBus);
+        deferredRegister.register(OrenoCommonsNeoForge.EVENT_BUS);
 
         return deferredRegister.register(resourceLocation.getPath(), supplier);
     }
 
     @Override
-    public void registerServerNetworkPacketReceiver(
-            ResourceLocation channelName,
-            UnifiedNetworkPacket.Handler handler
+    public <T extends CustomPacketPayload> void registerServerNetworkPacketReceiver(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            UnifiedNetworkPacket.Handler<T> handler
     ) {
-        UnifiedNetworkForge.registerServerPacketReceiver(channelName, handler);
+        OrenoCommonsNeoForge.EVENT_BUS.addListener((RegisterPayloadHandlersEvent event) -> {
+            event.registrar(type.id().getNamespace()).optional().playToServer(
+                    type,
+                    codec,
+                    (payload, context) -> {
+                        Player player = context.player();
+                        handler.handle(payload, player.getServer(), (ServerPlayer) player);
+                    }
+            );
+        });
     }
 
     @Override
-    public void sendNetworkPacketToPlayer(
-            ServerPlayer player,
-            ResourceLocation channelName,
-            FriendlyByteBuf buf
-    ) {
-        UnifiedNetworkForge.sendPacketToPlayer(player, channelName, buf);
+    public void sendNetworkPacketToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        PacketDistributor.sendToPlayer(player, payload);
     }
 
     @Override
     public boolean canSendNetworkPacketToPlayer(
             ServerPlayer player,
-            ResourceLocation channelName
+            CustomPacketPayload.Type<?> type
     ) {
-        return UnifiedNetworkForge.canSendPacketToPlayer(player, channelName);
+        return player.connection.hasChannel(type);
     }
 }
