@@ -3,6 +3,8 @@ package com.github.mahmudindev.mcmod.orenocommons.fabric.client.platform.service
 import com.github.mahmudindev.mcmod.orenocommons.client.network.UnifiedNetworkPacketClient;
 import com.github.mahmudindev.mcmod.orenocommons.client.platform.services.IClientPlatformHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
@@ -15,7 +17,26 @@ public class FabricClientPlatformHelper implements IClientPlatformHelper {
         ClientPlayNetworking.registerGlobalReceiver(
                 channelName,
                 (client, handlerX, buf, sender) -> {
-                    handler.handle(client, buf);
+                    handler.handle(new UnifiedNetworkPacketClient.Context() {
+                        @Override
+                        public Minecraft client() {
+                            return client;
+                        }
+
+                        @Override
+                        public LocalPlayer player() {
+                            return client.player;
+                        }
+
+                        @Override
+                        public void execute(Runnable task) {
+                            if (client.isSameThread()) {
+                                task.run();
+                            } else {
+                                client.execute(task);
+                            }
+                        }
+                    }, buf);
                 }
         );
     }

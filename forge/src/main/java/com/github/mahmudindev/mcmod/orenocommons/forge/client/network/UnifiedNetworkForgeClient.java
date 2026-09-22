@@ -5,6 +5,7 @@ import com.github.mahmudindev.mcmod.orenocommons.forge.network.UnifiedNetworkFor
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -115,10 +116,23 @@ public class UnifiedNetworkForgeClient {
                     return;
                 }
 
-                context.enqueueWork(() -> {
-                    Minecraft client = Minecraft.getInstance();
-                    handlerX.handle(client, buf);
-                });
+                Minecraft client = Minecraft.getInstance();
+                handlerX.handle(new UnifiedNetworkPacketClient.Context() {
+                    @Override
+                    public Minecraft client() {
+                        return client;
+                    }
+
+                    @Override
+                    public LocalPlayer player() {
+                        return client.player;
+                    }
+
+                    @Override
+                    public void execute(Runnable task) {
+                        context.enqueueWork(task);
+                    }
+                }, buf);
 
                 context.setPacketHandled(true);
             });

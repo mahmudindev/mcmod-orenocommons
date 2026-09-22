@@ -5,6 +5,7 @@ plugins {
 loom {
     forge {
         mixinConfig "orenocommons.mixins.json"
+        mixinConfig "orenocommons-forge.mixins.json"
     }
 }
 

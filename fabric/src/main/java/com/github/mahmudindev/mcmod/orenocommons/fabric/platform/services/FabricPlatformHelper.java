@@ -10,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.nio.file.Path;
@@ -83,7 +84,26 @@ public class FabricPlatformHelper implements IPlatformHelper {
         ServerPlayNetworking.registerGlobalReceiver(
                 channelName,
                 (server, player, handlerX, buf, responseSender) -> {
-                    handler.handle(server, player, buf);
+                    handler.handle(new UnifiedNetworkPacket.Context() {
+                        @Override
+                        public MinecraftServer server() {
+                            return server;
+                        }
+
+                        @Override
+                        public ServerPlayer player() {
+                            return player;
+                        }
+
+                        @Override
+                        public void execute(Runnable task) {
+                            if (server.isSameThread()) {
+                                task.run();
+                            } else {
+                                server.execute(task);
+                            }
+                        }
+                    }, buf);
                 }
         );
     }

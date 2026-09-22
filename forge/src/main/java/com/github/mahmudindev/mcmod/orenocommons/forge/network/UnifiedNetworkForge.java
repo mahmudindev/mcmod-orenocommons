@@ -136,10 +136,23 @@ public class UnifiedNetworkForge {
                 }
 
                 ServerPlayer sender = context.getSender();
-                context.enqueueWork(() -> {
-                    MinecraftServer server = sender != null ? sender.getServer() : null;
-                    handlerX.handle(server, sender, buf);
-                });
+                MinecraftServer server = sender != null ? sender.getServer() : null;
+                handlerX.handle(new UnifiedNetworkPacket.Context() {
+                    @Override
+                    public MinecraftServer server() {
+                        return server;
+                    }
+
+                    @Override
+                    public ServerPlayer player() {
+                        return sender;
+                    }
+
+                    @Override
+                    public void execute(Runnable task) {
+                        context.enqueueWork(task);
+                    }
+                }, buf);
 
                 context.setPacketHandled(true);
             });
