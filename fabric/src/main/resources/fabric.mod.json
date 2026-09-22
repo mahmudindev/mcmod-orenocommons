@@ -23,7 +23,8 @@
     ]
   },
   "mixins": [
-    "orenocommons.mixins.json"
+    "orenocommons.mixins.json",
+    "orenocommons-fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.16.14",

@@ -1,6 +1,6 @@
 package com.github.mahmudindev.mcmod.orenocommons.neoforge.platform.services;
 
-import com.github.mahmudindev.mcmod.orenocommons.neoforge.OrenoCommonsNeoForge;
+import com.github.mahmudindev.mcmod.orenocommons.OrenoCommons;
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import com.github.mahmudindev.mcmod.orenocommons.platform.services.IPlatformHelper;
@@ -10,8 +10,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
@@ -65,6 +68,12 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         return !FMLLoader.isProduction();
     }
 
+    public static IEventBus getModEventBus(String id) {
+        return MODLIST.getModContainerById(id)
+                .map(ModContainer::getEventBus)
+                .orElseThrow(() -> new IllegalStateException("No mod found with id " + id));
+    }
+
     @Override
     public <T, V extends T> Supplier<V> registerRegistryEntry(
             ResourceKey<? extends Registry<T>> resourceKey,
@@ -76,7 +85,8 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
                 resourceLocation.getNamespace()
         );
 
-        deferredRegister.register(OrenoCommonsNeoForge.EVENT_BUS);
+        IEventBus eventBus = getModEventBus(OrenoCommons.MOD_ID);
+        deferredRegister.register(eventBus);
 
         return deferredRegister.register(resourceLocation.getPath(), supplier);
     }
@@ -87,13 +97,29 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
             StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             UnifiedNetworkPacket.Handler<T> handler
     ) {
-        OrenoCommonsNeoForge.EVENT_BUS.addListener((RegisterPayloadHandlersEvent event) -> {
+        IEventBus eventBus = getModEventBus(OrenoCommons.MOD_ID);
+        eventBus.addListener((RegisterPayloadHandlersEvent event) -> {
             event.registrar(type.id().getNamespace()).optional().playToServer(
                     type,
                     codec,
                     (payload, context) -> {
-                        Player player = context.player();
-                        handler.handle(payload, player.getServer(), (ServerPlayer) player);
+                        handler.handle(new UnifiedNetworkPacket.Context() {
+                            @Override
+                            public MinecraftServer server() {
+                                Player player = context.player();
+                                return player.getServer();
+                            }
+
+                            @Override
+                            public ServerPlayer player() {
+                                return (ServerPlayer) context.player();
+                            }
+
+                            @Override
+                            public void execute(Runnable task) {
+                                context.enqueueWork(task);
+                            }
+                        }, payload);
                     }
             );
         });

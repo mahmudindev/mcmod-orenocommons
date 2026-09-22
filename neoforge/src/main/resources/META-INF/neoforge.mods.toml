@@ -29,3 +29,6 @@ side = "BOTH"
 
 [[mixins]]
 config = "orenocommons.mixins.json"
+
+[[mixins]]
+config = "orenocommons-neoforge.mixins.json"

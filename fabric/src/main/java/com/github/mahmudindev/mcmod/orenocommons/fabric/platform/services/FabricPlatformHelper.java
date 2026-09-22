@@ -13,6 +13,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.nio.file.Path;
@@ -89,7 +90,27 @@ public class FabricPlatformHelper implements IPlatformHelper {
         ServerPlayNetworking.registerGlobalReceiver(
                 type,
                 (payload, context) -> {
-                    handler.handle(payload, context.server(), context.player());
+                    handler.handle(new UnifiedNetworkPacket.Context() {
+                        @Override
+                        public MinecraftServer server() {
+                            return context.server();
+                        }
+
+                        @Override
+                        public ServerPlayer player() {
+                            return context.player();
+                        }
+
+                        @Override
+                        public void execute(Runnable task) {
+                            MinecraftServer server = context.server();
+                            if (server.isSameThread()) {
+                                task.run();
+                            } else {
+                                server.execute(task);
+                            }
+                        }
+                    }, payload);
                 }
         );
     }
