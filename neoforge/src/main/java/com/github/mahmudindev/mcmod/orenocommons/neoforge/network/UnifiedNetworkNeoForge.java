@@ -16,43 +16,41 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class UnifiedNetworkNeoForge {
+    private static final Set<ResourceLocation> PACKET_CODECS = new HashSet<>();
     public static final Map<ResourceLocation, IPayloadHandler<?>> PACKET_HANDLERS = new HashMap<>();
 
-    public static <T extends CustomPacketPayload> void registerClientPacketCodec(
+    public static <T extends CustomPacketPayload> void registerPacketCodec(
             CustomPacketPayload.Type<T> type,
             StreamCodec<RegistryFriendlyByteBuf, T> codec
     ) {
-        IEventBus eventBus = NeoForgePlatformHelper.getModEventBus(OrenoCommons.MOD_ID);
-        eventBus.addListener((RegisterPayloadHandlersEvent event) -> {
-            event.registrar(type.id().getNamespace()).optional().playToClient(
-                    type,
-                    codec,
-                    (payload, context) -> {
-                        IPayloadHandler<T> handler = (IPayloadHandler<T>) UnifiedNetworkNeoForgeClient.PACKET_HANDLERS.get(type.id());
-                        if (handler != null) {
-                            handler.handle(payload, context);
-                        }
-                    }
-            );
-        });
-    }
+        if (!PACKET_CODECS.add(type.id())) {
+            return;
+        }
 
-    public static <T extends CustomPacketPayload> void registerServerPacketCodec(
-            CustomPacketPayload.Type<T> type,
-            StreamCodec<RegistryFriendlyByteBuf, T> codec
-    ) {
         IEventBus eventBus = NeoForgePlatformHelper.getModEventBus(OrenoCommons.MOD_ID);
         eventBus.addListener((RegisterPayloadHandlersEvent event) -> {
-            event.registrar(type.id().getNamespace()).optional().playToServer(
+            event.registrar(type.id().getNamespace()).optional().playBidirectional(
                     type,
                     codec,
                     (payload, context) -> {
-                        IPayloadHandler<T> handler = (IPayloadHandler<T>) PACKET_HANDLERS.get(type.id());
-                        if (handler != null) {
-                            handler.handle(payload, context);
+                        switch (context.flow()) {
+                            case CLIENTBOUND -> {
+                                IPayloadHandler<T> handler = (IPayloadHandler<T>) UnifiedNetworkNeoForgeClient.PACKET_HANDLERS.get(type.id());
+                                if (handler != null) {
+                                    handler.handle(payload, context);
+                                }
+                            }
+                            case SERVERBOUND -> {
+                                IPayloadHandler<T> handler = (IPayloadHandler<T>) PACKET_HANDLERS.get(type.id());
+                                if (handler != null) {
+                                    handler.handle(payload, context);
+                                }
+                            }
                         }
                     }
             );

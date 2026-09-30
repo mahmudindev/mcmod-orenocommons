@@ -94,7 +94,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
             CustomPacketPayload.Type<T> type,
             StreamCodec<RegistryFriendlyByteBuf, T> codec
     ) {
-        UnifiedNetworkNeoForge.registerClientPacketCodec(type, codec);
+        UnifiedNetworkNeoForge.registerPacketCodec(type, codec);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
             CustomPacketPayload.Type<T> type,
             StreamCodec<RegistryFriendlyByteBuf, T> codec
     ) {
-        UnifiedNetworkNeoForge.registerServerPacketCodec(type, codec);
+        UnifiedNetworkNeoForge.registerPacketCodec(type, codec);
     }
 
     @Override
