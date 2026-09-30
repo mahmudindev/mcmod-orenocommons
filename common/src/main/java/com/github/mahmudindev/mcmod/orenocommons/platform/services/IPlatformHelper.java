@@ -32,9 +32,18 @@ public interface IPlatformHelper {
             Supplier<? extends V> supplier
     );
 
+    <T extends CustomPacketPayload> void registerClientNetworkPacketCodec(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<RegistryFriendlyByteBuf, T> codec
+    );
+
+    <T extends CustomPacketPayload> void registerServerNetworkPacketCodec(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<RegistryFriendlyByteBuf, T> codec
+    );
+
     <T extends CustomPacketPayload> void registerServerNetworkPacketReceiver(
             CustomPacketPayload.Type<T> type,
-            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             UnifiedNetworkPacket.Handler<T> handler
     );
 

@@ -7,12 +7,25 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 
 public class UnifiedNetwork {
+    public static <T extends CustomPacketPayload> void registerClientPacketCodec(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<RegistryFriendlyByteBuf, T> codec
+    ) {
+        Services.PLATFORM.registerClientNetworkPacketCodec(type, codec);
+    }
+
+    public static <T extends CustomPacketPayload> void registerServerPacketCodec(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<RegistryFriendlyByteBuf, T> codec
+    ) {
+        Services.PLATFORM.registerServerNetworkPacketCodec(type, codec);
+    }
+
     public static <T extends CustomPacketPayload> void registerServerPacketReceiver(
             CustomPacketPayload.Type<T> type,
-            StreamCodec<RegistryFriendlyByteBuf, T> codec,
             UnifiedNetworkPacket.Handler<T> handler
     ) {
-        Services.PLATFORM.registerServerNetworkPacketReceiver(type, codec, handler);
+        Services.PLATFORM.registerServerNetworkPacketReceiver(type, handler);
     }
 
     public static void sendPacketToPlayer(ServerPlayer player, CustomPacketPayload payload) {

@@ -1,6 +1,7 @@
 package com.github.mahmudindev.mcmod.orenocommons.neoforge.platform.services;
 
 import com.github.mahmudindev.mcmod.orenocommons.OrenoCommons;
+import com.github.mahmudindev.mcmod.orenocommons.neoforge.network.UnifiedNetworkNeoForge;
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import com.github.mahmudindev.mcmod.orenocommons.platform.services.IPlatformHelper;
@@ -10,9 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -20,7 +19,6 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.nio.file.Path;
@@ -92,37 +90,27 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    public <T extends CustomPacketPayload> void registerClientNetworkPacketCodec(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<RegistryFriendlyByteBuf, T> codec
+    ) {
+        UnifiedNetworkNeoForge.registerClientPacketCodec(type, codec);
+    }
+
+    @Override
+    public <T extends CustomPacketPayload> void registerServerNetworkPacketCodec(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<RegistryFriendlyByteBuf, T> codec
+    ) {
+        UnifiedNetworkNeoForge.registerServerPacketCodec(type, codec);
+    }
+
+    @Override
     public <T extends CustomPacketPayload> void registerServerNetworkPacketReceiver(
             CustomPacketPayload.Type<T> type,
-            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             UnifiedNetworkPacket.Handler<T> handler
     ) {
-        IEventBus eventBus = getModEventBus(OrenoCommons.MOD_ID);
-        eventBus.addListener((RegisterPayloadHandlersEvent event) -> {
-            event.registrar(type.id().getNamespace()).optional().playToServer(
-                    type,
-                    codec,
-                    (payload, context) -> {
-                        handler.handle(new UnifiedNetworkPacket.Context() {
-                            @Override
-                            public MinecraftServer server() {
-                                Player player = context.player();
-                                return player.getServer();
-                            }
-
-                            @Override
-                            public ServerPlayer player() {
-                                return (ServerPlayer) context.player();
-                            }
-
-                            @Override
-                            public void execute(Runnable task) {
-                                context.enqueueWork(task);
-                            }
-                        }, payload);
-                    }
-            );
-        });
+        UnifiedNetworkNeoForge.registerServerNetworkPacketReceiver(type, handler);
     }
 
     @Override

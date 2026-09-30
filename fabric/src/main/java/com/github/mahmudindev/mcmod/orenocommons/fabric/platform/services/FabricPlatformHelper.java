@@ -80,13 +80,26 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <T extends CustomPacketPayload> void registerServerNetworkPacketReceiver(
+    public <T extends CustomPacketPayload> void registerClientNetworkPacketCodec(
             CustomPacketPayload.Type<T> type,
-            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
-            UnifiedNetworkPacket.Handler<T> handler
+            StreamCodec<RegistryFriendlyByteBuf, T> codec
+    ) {
+        PayloadTypeRegistry.playS2C().register(type, codec);
+    }
+
+    @Override
+    public <T extends CustomPacketPayload> void registerServerNetworkPacketCodec(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<RegistryFriendlyByteBuf, T> codec
     ) {
         PayloadTypeRegistry.playC2S().register(type, codec);
+    }
 
+    @Override
+    public <T extends CustomPacketPayload> void registerServerNetworkPacketReceiver(
+            CustomPacketPayload.Type<T> type,
+            UnifiedNetworkPacket.Handler<T> handler
+    ) {
         ServerPlayNetworking.registerGlobalReceiver(
                 type,
                 (payload, context) -> {
