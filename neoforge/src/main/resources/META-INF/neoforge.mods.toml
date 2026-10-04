@@ -1,34 +1,34 @@
 modLoader = "javafml"
-loaderVersion = "[4,)"
+loaderVersion = "[${neoforge_loader_version},)"
 issueTrackerURL = "https://github.com/mahmudindev/mcmod-orenocommons/issues"
-license = "ARR"
+license = "${mod_license}"
 
 [[mods]]
-modId = "orenocommons"
+modId = "${mod_id}"
 version = "${version}"
-displayName = "Oreno Commons"
-authors = "mahmudindev"
+displayName = "${mod_name}"
+authors = "${mod_authors}"
 description = '''
-Unify and add common code across mod loader.
+${description}
 '''
-logoFile = "assets/orenocommons/icon.png"
+logoFile = "assets/${mod_id}/icon.png"
 
-[[dependencies.orenocommons]]
+[[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.1,)"
+versionRange = "[${minecraft_version}.${neoforge_version},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.orenocommons]]
+[[dependencies.${mod_id}]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.1,)"
+versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[mixins]]
-config = "orenocommons.mixins.json"
+config = "${mod_id}.mixins.json"
 
 [[mixins]]
-config = "orenocommons-neoforge.mixins.json"
+config = "${mod_id}-neoforge.mixins.json"

@@ -6,8 +6,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.nio.file.Path;
@@ -28,7 +28,7 @@ public interface IPlatformHelper {
 
     <T, V extends T> Supplier<V> registerRegistryEntry(
             ResourceKey<? extends Registry<T>> resourceKey,
-            ResourceLocation resourceLocation,
+            Identifier identifier,
             Supplier<? extends V> supplier
     );
 

@@ -11,8 +11,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -64,17 +64,17 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public <T, V extends T> Supplier<V> registerRegistryEntry(
             ResourceKey<? extends Registry<T>> resourceKey,
-            ResourceLocation resourceLocation,
+            Identifier identifier,
             Supplier<? extends V> supplier
     ) {
-        Registry<?> registry = BuiltInRegistries.REGISTRY.get(resourceKey.location());
+        Registry<?> registry = BuiltInRegistries.REGISTRY.getValue(resourceKey.identifier());
         if (registry == null) {
             throw new IllegalStateException("Unable to find the registry.");
         }
 
         //noinspection unchecked
         Registry<T> registryX = (Registry<T>) registry;
-        V registered = Registry.register(registryX, resourceLocation, supplier.get());
+        V registered = Registry.register(registryX, identifier, supplier.get());
 
         return () -> registered;
     }
@@ -84,7 +84,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
             CustomPacketPayload.Type<T> type,
             StreamCodec<RegistryFriendlyByteBuf, T> codec
     ) {
-        PayloadTypeRegistry.playS2C().register(type, codec);
+        PayloadTypeRegistry.clientboundPlay().register(type, codec);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
             CustomPacketPayload.Type<T> type,
             StreamCodec<RegistryFriendlyByteBuf, T> codec
     ) {
-        PayloadTypeRegistry.playC2S().register(type, codec);
+        PayloadTypeRegistry.serverboundPlay().register(type, codec);
     }
 
     @Override

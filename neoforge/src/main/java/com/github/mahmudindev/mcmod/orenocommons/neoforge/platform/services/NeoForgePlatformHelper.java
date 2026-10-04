@@ -9,14 +9,13 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -49,7 +48,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public EnvSide getEnvSide() {
-        switch (FMLEnvironment.dist) {
+        switch (FMLEnvironment.getDist()) {
             case CLIENT -> {
                 return EnvSide.CLIENT;
             }
@@ -63,7 +62,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean isDevelopmentEnvironment() {
-        return !FMLLoader.isProduction();
+        return !FMLEnvironment.isProduction();
     }
 
     public static IEventBus getModEventBus(String id) {
@@ -75,18 +74,18 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public <T, V extends T> Supplier<V> registerRegistryEntry(
             ResourceKey<? extends Registry<T>> resourceKey,
-            ResourceLocation resourceLocation,
+            Identifier identifier,
             Supplier<? extends V> supplier
     ) {
         DeferredRegister<T> deferredRegister = DeferredRegister.create(
                 resourceKey,
-                resourceLocation.getNamespace()
+                identifier.getNamespace()
         );
 
         IEventBus eventBus = getModEventBus(OrenoCommons.MOD_ID);
         deferredRegister.register(eventBus);
 
-        return deferredRegister.register(resourceLocation.getPath(), supplier);
+        return deferredRegister.register(identifier.getPath(), supplier);
     }
 
     @Override

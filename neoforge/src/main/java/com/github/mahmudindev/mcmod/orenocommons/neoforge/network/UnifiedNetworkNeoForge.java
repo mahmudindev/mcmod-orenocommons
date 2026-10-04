@@ -2,12 +2,13 @@ package com.github.mahmudindev.mcmod.orenocommons.neoforge.network;
 
 import com.github.mahmudindev.mcmod.orenocommons.OrenoCommons;
 import com.github.mahmudindev.mcmod.orenocommons.neoforge.client.network.UnifiedNetworkNeoForgeClient;
+import com.github.mahmudindev.mcmod.orenocommons.neoforge.mixin.ServerPlayerAccessor;
 import com.github.mahmudindev.mcmod.orenocommons.neoforge.platform.services.NeoForgePlatformHelper;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -21,8 +22,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class UnifiedNetworkNeoForge {
-    private static final Set<ResourceLocation> PACKET_CODECS = new HashSet<>();
-    public static final Map<ResourceLocation, IPayloadHandler<?>> PACKET_HANDLERS = new HashMap<>();
+    private static final Set<Identifier> PACKET_CODECS = new HashSet<>();
+    public static final Map<Identifier, IPayloadHandler<?>> PACKET_HANDLERS = new HashMap<>();
 
     public static <T extends CustomPacketPayload> void registerPacketCodec(
             CustomPacketPayload.Type<T> type,
@@ -66,7 +67,7 @@ public class UnifiedNetworkNeoForge {
                 @Override
                 public MinecraftServer server() {
                     Player player = context.player();
-                    return player.getServer();
+                    return ((ServerPlayerAccessor) player).orenocommons$getServer();
                 }
 
                 @Override

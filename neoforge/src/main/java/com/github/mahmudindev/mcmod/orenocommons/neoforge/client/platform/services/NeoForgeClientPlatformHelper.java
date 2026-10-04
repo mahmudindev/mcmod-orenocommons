@@ -6,7 +6,7 @@ import com.github.mahmudindev.mcmod.orenocommons.neoforge.client.network.Unified
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class NeoForgeClientPlatformHelper implements IClientPlatformHelper {
     @Override
@@ -19,7 +19,7 @@ public class NeoForgeClientPlatformHelper implements IClientPlatformHelper {
 
     @Override
     public void sendNetworkPacketToServer(CustomPacketPayload payload) {
-        PacketDistributor.sendToServer(payload);
+        ClientPacketDistributor.sendToServer(payload);
     }
 
     @Override

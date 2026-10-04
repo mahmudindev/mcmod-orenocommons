@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "id": "orenocommons",
+  "id": "${mod_id}",
   "version": "${version}",
-  "name": "Oreno Commons",
-  "description": "Unify and add common code across mod loader.",
+  "name": "${mod_name}",
+  "description": "${description}",
   "authors": [
-    "mahmudindev"
+    "${mod_authors_fabric}"
   ],
   "contact": {
     "homepage": "https://github.com/mahmudindev",
     "sources": "https://github.com/mahmudindev/mcmod-orenocommons"
   },
-  "license": "ARR",
-  "icon": "assets/orenocommons/icon.png",
+  "license": "${mod_license}",
+  "icon": "assets/${mod_id}/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -23,13 +23,13 @@
     ]
   },
   "mixins": [
-    "orenocommons.mixins.json",
-    "orenocommons-fabric.mixins.json"
+    "${mod_id}.mixins.json",
+    "${mod_id}-fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.14",
-    "minecraft": "~1.21.1",
-    "java": ">=21",
+    "fabricloader": ">=${fabric_loader_version}",
+    "minecraft": ">=${minecraft_version}",
+    "java": ">=${java_version}",
     "fabric-api": "*"
   },
   "suggests": {

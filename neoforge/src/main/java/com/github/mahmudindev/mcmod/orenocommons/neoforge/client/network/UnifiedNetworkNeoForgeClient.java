@@ -4,14 +4,14 @@ import com.github.mahmudindev.mcmod.orenocommons.client.network.UnifiedNetworkPa
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class UnifiedNetworkNeoForgeClient {
-    public static final Map<ResourceLocation, IPayloadHandler<?>> PACKET_HANDLERS = new HashMap<>();
+    public static final Map<Identifier, IPayloadHandler<?>> PACKET_HANDLERS = new HashMap<>();
 
     public static  <T extends CustomPacketPayload> void registerClientNetworkPacketReceiver(
             CustomPacketPayload.Type<T> type,
