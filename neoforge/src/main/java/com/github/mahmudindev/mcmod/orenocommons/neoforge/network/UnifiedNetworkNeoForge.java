@@ -39,19 +39,15 @@ public class UnifiedNetworkNeoForge {
                     type,
                     codec,
                     (payload, context) -> {
-                        switch (context.flow()) {
-                            case CLIENTBOUND -> {
-                                IPayloadHandler<T> handler = (IPayloadHandler<T>) UnifiedNetworkNeoForgeClient.PACKET_HANDLERS.get(type.id());
-                                if (handler != null) {
-                                    handler.handle(payload, context);
-                                }
-                            }
-                            case SERVERBOUND -> {
-                                IPayloadHandler<T> handler = (IPayloadHandler<T>) PACKET_HANDLERS.get(type.id());
-                                if (handler != null) {
-                                    handler.handle(payload, context);
-                                }
-                            }
+                        IPayloadHandler<T> handler = (IPayloadHandler<T>) PACKET_HANDLERS.get(type.id());
+                        if (handler != null) {
+                            handler.handle(payload, context);
+                        }
+                    },
+                    (payload, context) -> {
+                        IPayloadHandler<T> handler = (IPayloadHandler<T>) UnifiedNetworkNeoForgeClient.PACKET_HANDLERS.get(type.id());
+                        if (handler != null) {
+                            handler.handle(payload, context);
                         }
                     }
             );
