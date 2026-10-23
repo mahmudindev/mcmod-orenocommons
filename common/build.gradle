@@ -14,6 +14,7 @@ minecraft {
 
 dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+    compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.9.1'
 
     compileOnly(annotationProcessor(
             group: 'io.github.llamalad7',
