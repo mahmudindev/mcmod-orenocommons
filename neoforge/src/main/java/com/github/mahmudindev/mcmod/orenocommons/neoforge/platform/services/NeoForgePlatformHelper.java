@@ -16,6 +16,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -24,8 +25,6 @@ import java.nio.file.Path;
 import java.util.function.Supplier;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
-    private static final ModList MODLIST = ModList.get();
-
     @Override
     public String getPlatformName() {
         return "Forge";
@@ -43,7 +42,15 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean isModLoaded(String id) {
-        return MODLIST.isLoaded(id);
+        ModList modList = ModList.get();
+
+        if (modList == null) {
+            FMLLoader loader = FMLLoader.getCurrent();
+
+            return loader.getLoadingModList().getModFileById(id) != null;
+        }
+
+        return modList.isLoaded(id);
     }
 
     @Override
@@ -66,7 +73,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     public static IEventBus getModEventBus(String id) {
-        return MODLIST.getModContainerById(id)
+        return ModList.get().getModContainerById(id)
                 .map(ModContainer::getEventBus)
                 .orElseThrow(() -> new IllegalStateException("No mod found with id " + id));
     }
