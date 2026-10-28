@@ -15,14 +15,13 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.registries.DeferredRegister;
 
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
 public class ForgePlatformHelper implements IPlatformHelper {
-    private static final ModList MODLIST = ModList.get();
-
     @Override
     public String getPlatformName() {
         return "Forge";
@@ -40,7 +39,13 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean isModLoaded(String id) {
-        return MODLIST.isLoaded(id);
+        ModList modList = ModList.get();
+
+        if (modList == null) {
+            return LoadingModList.get().getModFileById(id) != null;
+        }
+
+        return modList.isLoaded(id);
     }
 
     @Override
