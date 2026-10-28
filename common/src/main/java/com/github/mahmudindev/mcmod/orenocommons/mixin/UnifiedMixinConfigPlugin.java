@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class UnifiedMixinConfigPlugin implements IMixinConfigPlugin {
@@ -30,26 +29,122 @@ public class UnifiedMixinConfigPlugin implements IMixinConfigPlugin {
         if (name.startsWith(compatPrefix)) {
             String[] names = name.substring(compatPrefix.length()).split("\\.");
 
-            boolean shouldApply = false;
+            Boolean shouldApply = null;
+            Boolean savedShouldApply = null;
+
+            int mode = 0;
             boolean invert = false;
             for (int i = 0; i < names.length - 1; i++) {
-                if (Objects.equals(names[i], "not")) {
-                    invert = true;
-                    continue;
+                shouldApply = switch (names[i]) {
+                    case "and", "or", "nand", "nor", "xor", "xnor" -> {
+                        if (shouldApply != null) {
+                            if (savedShouldApply != null) {
+                                savedShouldApply = shouldApply && savedShouldApply;
+                            } else {
+                                savedShouldApply = shouldApply;
+                            }
+                        }
+                        yield null;
+                    }
+                    default -> shouldApply;
+                };
+
+                switch (names[i]) {
+                    case "not":
+                        invert = !invert;
+                        continue;
+                    case "and":
+                        mode = invert ? 2 : 0;
+                        invert = false;
+                        continue;
+                    case "or":
+                        mode = invert ? 3 : 1;
+                        invert = false;
+                        continue;
+                    case "nand":
+                        mode = invert ? 0 : 2;
+                        invert = false;
+                        continue;
+                    case "nor":
+                        mode = invert ? 1 : 3;
+                        invert = false;
+                        continue;
+                    case "xor":
+                        mode = invert ? 5 : 4;
+                        continue;
+                    case "xnor":
+                        mode = invert ? 4 : 5;
+                        continue;
                 }
 
-                shouldApply = UnifiedPlatform.isModLoaded(names[i]);
+                boolean isModLoaded = UnifiedPlatform.isModLoaded(names[i]);
 
                 if (invert) {
-                    shouldApply = !shouldApply;
+                    isModLoaded = !isModLoaded;
                     invert = false;
                 }
 
-                if (!shouldApply) {
-                    break;
+                switch (mode) {
+                    case 0:
+                        if (shouldApply == null) {
+                            shouldApply = isModLoaded;
+                            break;
+                        }
+
+                        shouldApply = shouldApply && isModLoaded;
+                        break;
+                    case 1:
+                        if (shouldApply == null) {
+                            shouldApply = isModLoaded;
+                            break;
+                        }
+
+                        shouldApply = shouldApply || isModLoaded;
+                        break;
+                    case 2:
+                        if (shouldApply == null) {
+                            shouldApply = !isModLoaded;
+                            break;
+                        }
+
+                        shouldApply = shouldApply || !isModLoaded;
+                        break;
+                    case 3:
+                        if (shouldApply == null) {
+                            shouldApply = !isModLoaded;
+                            break;
+                        }
+
+                        shouldApply = shouldApply && !isModLoaded;
+                        break;
+                    case 4:
+                        if (shouldApply == null) {
+                            shouldApply = isModLoaded;
+                            break;
+                        }
+
+                        shouldApply = shouldApply != isModLoaded;
+                        break;
+                    case 5:
+                        if (shouldApply == null) {
+                            shouldApply = isModLoaded;
+                            break;
+                        }
+
+                        shouldApply = shouldApply == isModLoaded;
+                        break;
                 }
             }
-            return shouldApply;
+
+            if (savedShouldApply != null) {
+                if (shouldApply != null) {
+                    shouldApply = savedShouldApply && shouldApply;
+                } else {
+                    shouldApply = savedShouldApply;
+                }
+            }
+
+            return shouldApply != null && shouldApply;
         }
 
         return true;
