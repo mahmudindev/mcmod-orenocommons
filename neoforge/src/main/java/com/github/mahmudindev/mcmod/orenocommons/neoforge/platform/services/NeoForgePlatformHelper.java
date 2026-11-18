@@ -4,6 +4,7 @@ import com.github.mahmudindev.mcmod.orenocommons.OrenoCommons;
 import com.github.mahmudindev.mcmod.orenocommons.neoforge.network.UnifiedNetworkNeoForge;
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
+import com.github.mahmudindev.mcmod.orenocommons.platform.LoaderType;
 import com.github.mahmudindev.mcmod.orenocommons.platform.services.IPlatformHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -23,12 +24,18 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public String getPlatformName() {
-        return "Forge";
+        return "NeoForge";
+    }
+
+    @Override
+    public LoaderType getLoaderType() {
+        return LoaderType.NEOFORGE;
     }
 
     @Override
@@ -50,6 +57,21 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         }
 
         return modList.isLoaded(id);
+    }
+
+    @Override
+    public String getModVersion(String id) {
+        ModList modList = ModList.get();
+
+        if (modList == null) {
+            return Optional.ofNullable(LoadingModList.get())
+                    .map(v -> v.getModFileById(id).versionString())
+                    .orElse(null);
+        }
+
+        return modList.getModContainerById(id)
+                .map(v -> v.getModInfo().getVersion().getQualifier())
+                .orElse(null);
     }
 
     @Override

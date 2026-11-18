@@ -9,6 +9,10 @@ public class UnifiedPlatform {
         return Services.PLATFORM.getPlatformName();
     }
 
+    public static LoaderType getLoaderType() {
+        return Services.PLATFORM.getLoaderType();
+    }
+
     public static Path getGameDir() {
         return Services.PLATFORM.getGameDir();
     }
@@ -19,6 +23,10 @@ public class UnifiedPlatform {
 
     public static boolean isModLoaded(String id) {
         return Services.PLATFORM.isModLoaded(id);
+    }
+
+    public static String getModVersion(String id) {
+        return  Services.PLATFORM.getModVersion(id);
     }
 
     public static EnvSide getEnvSide() {

@@ -2,6 +2,7 @@ package com.github.mahmudindev.mcmod.orenocommons.fabric.platform.services;
 
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
+import com.github.mahmudindev.mcmod.orenocommons.platform.LoaderType;
 import com.github.mahmudindev.mcmod.orenocommons.platform.services.IPlatformHelper;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -28,6 +29,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    public LoaderType getLoaderType() {
+        return LoaderType.FABRIC;
+    }
+
+    @Override
     public Path getGameDir() {
         return LOADER.getGameDir();
     }
@@ -40,6 +46,13 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public boolean isModLoaded(String id) {
         return LOADER.isModLoaded(id);
+    }
+
+    @Override
+    public String getModVersion(String id) {
+        return LOADER.getModContainer(id)
+                .map(v -> v.getMetadata().getVersion().getFriendlyString())
+                .orElse(null);
     }
 
     @Override
