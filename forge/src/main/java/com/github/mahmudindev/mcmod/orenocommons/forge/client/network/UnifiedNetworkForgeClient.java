@@ -151,6 +151,7 @@ public class UnifiedNetworkForgeClient {
 
         if (!SERVER_PACKETS.contains(channelName)) {
             connection.send(new ServerboundCustomPayloadPacket(channelName, buf));
+            return;
         }
 
         FriendlyByteBuf bufX = new FriendlyByteBuf(Unpooled.buffer());
@@ -169,6 +170,7 @@ public class UnifiedNetworkForgeClient {
         }
 
         ClientPacketListener connection = getConnection();
+
         return UnifiedNetworkForge.canSendPacket(connection.getConnection(), channelName);
     }
 }

@@ -3,6 +3,7 @@ package com.github.mahmudindev.mcmod.orenocommons.forge.platform.services;
 import com.github.mahmudindev.mcmod.orenocommons.forge.network.UnifiedNetworkForge;
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
+import com.github.mahmudindev.mcmod.orenocommons.platform.LoaderType;
 import com.github.mahmudindev.mcmod.orenocommons.platform.services.IPlatformHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,12 +20,18 @@ import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.registries.DeferredRegister;
 
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public String getPlatformName() {
         return "Forge";
+    }
+
+    @Override
+    public LoaderType getLoaderType() {
+        return LoaderType.FORGE;
     }
 
     @Override
@@ -46,6 +53,21 @@ public class ForgePlatformHelper implements IPlatformHelper {
         }
 
         return modList.isLoaded(id);
+    }
+
+    @Override
+    public String getModVersion(String id) {
+        ModList modList = ModList.get();
+
+        if (modList == null) {
+            return Optional.ofNullable(LoadingModList.get())
+                    .map(v -> v.getModFileById(id).versionString())
+                    .orElse(null);
+        }
+
+        return modList.getModContainerById(id)
+                .map(v -> v.getModInfo().getVersion().getQualifier())
+                .orElse(null);
     }
 
     @Override

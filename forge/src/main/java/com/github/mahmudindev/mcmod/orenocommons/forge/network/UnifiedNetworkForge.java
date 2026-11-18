@@ -25,7 +25,8 @@ import java.util.function.Predicate;
 public class UnifiedNetworkForge {
     public static final String CHANNEL_VERSION = "1.0";
     public static final ResourceLocation CHANNEL_NAME = ResourceLocation.fromNamespaceAndPath(
-            OrenoCommons.MOD_ID, "default"
+            OrenoCommons.MOD_ID,
+            "default"
     );
     public static final EventNetworkChannel CHANNEL = NetworkRegistry.newEventChannel(
             CHANNEL_NAME,
