@@ -21,6 +21,8 @@ dependencies {
             name: 'mixinextras-common',
             version: '0.5.4'
     ))
+
+    implementation("org.semver4j:semver4j:$rootProject.semver4j_version")
 }
 
 configurations {

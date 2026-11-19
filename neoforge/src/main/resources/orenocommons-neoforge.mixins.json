@@ -11,5 +11,5 @@
   "injectors": {
     "defaultRequire": 1
   },
-  "plugin": "com.github.mahmudindev.mcmod.orenocommons.mixin.UnifiedMixinConfigPlugin"
+  "plugin": "com.github.mahmudindev.mcmod.orenocommons.mixin.MixinConfigPlugin"
 }

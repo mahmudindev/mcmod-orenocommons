@@ -2,6 +2,7 @@ package com.github.mahmudindev.mcmod.orenocommons.platform.services;
 
 import com.github.mahmudindev.mcmod.orenocommons.network.UnifiedNetworkPacket;
 import com.github.mahmudindev.mcmod.orenocommons.platform.EnvSide;
+import com.github.mahmudindev.mcmod.orenocommons.platform.LoaderType;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -16,11 +17,15 @@ import java.util.function.Supplier;
 public interface IPlatformHelper {
     String getPlatformName();
 
+    LoaderType getLoaderType();
+
     Path getGameDir();
 
     Path getConfigDir();
 
     boolean isModLoaded(String id);
+
+    String getModVersion(String id);
 
     EnvSide getEnvSide();
 

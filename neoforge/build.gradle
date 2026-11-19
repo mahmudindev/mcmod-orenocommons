@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    jarJar(implementation("org.semver4j:semver4j:$rootProject.semver4j_version"))
 }
 
 neoForge {
